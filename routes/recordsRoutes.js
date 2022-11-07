@@ -1,25 +1,27 @@
 import express from 'express';
+import {
+  createRecord,
+  deleteRecord,
+  getAllRecords,
+  getSingleRecord,
+  updateRecord,
+} from '../controllers/recordsController.js';
 
 const route = express.Router();
 
 // Route GET "/records"
-route.get('/', (req, res) => {
-  res.send('Received get request from records');
-});
+route.get('/', getAllRecords);
+
+// Route GET "/records/:id"
+route.get('/:id', getSingleRecord);
 
 // Route POST "/records"
-route.post('/', (req, res) => {
-  res.send('Received post request from records');
-});
+route.post('/', createRecord);
 
 // Route PATCH "/records/:id"
-route.patch('/:id', (req, res, next) => {
-  res.send('Received patch request from records');
-});
+route.patch('/:id', updateRecord);
 
 // Route DELETE "/records/:id"
-route.delete('/:id', (req, res, next) => {
-  res.send('Received delete request from records');
-});
+route.delete('/:id', deleteRecord);
 
 export default route;
