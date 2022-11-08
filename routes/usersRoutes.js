@@ -6,6 +6,8 @@ import {
   getSingleUser,
   updateUser,
 } from '../controllers/usersController.js';
+import { body, check } from 'express-validator';
+import { usersValidation } from '../middlewares/validationMiddleware.js';
 
 const route = express.Router();
 
@@ -16,7 +18,7 @@ route.get('/', getAllUsers);
 route.get('/:id', getSingleUser);
 
 // Route POST "/users"
-route.post('/', createUser);
+route.post('/', usersValidation, createUser);
 
 // Route PATCH "/users/:id"
 route.patch('/:id', updateUser);

@@ -1,4 +1,5 @@
 import usersCollection from './../models/usersSchema.js';
+import { validationResult } from 'express-validator';
 
 export const getAllUsers = async (req, res, next) => {
   try {
