@@ -5,6 +5,7 @@ import {
   getAllUsers,
   getSingleUser,
   updateUser,
+  loginUser,
 } from '../controllers/usersController.js';
 import { body, check } from 'express-validator';
 import { usersValidation } from '../middlewares/validationMiddleware.js';
@@ -13,6 +14,9 @@ const route = express.Router();
 
 // Route GET "/users"
 route.get('/', getAllUsers);
+
+// Route POST "/users/login"
+route.post('/login', loginUser);
 
 // Route GET "/users/:id"
 route.get('/:id', getSingleUser);
