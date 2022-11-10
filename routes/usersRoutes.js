@@ -9,11 +9,12 @@ import {
 } from '../controllers/usersController.js';
 import { body, check } from 'express-validator';
 import { usersValidation } from '../middlewares/validationMiddleware.js';
+import { isAdmin } from '../middlewares/isAdminMiddleware.js';
 
 const route = express.Router();
 
 // Route GET "/users"
-route.get('/', getAllUsers);
+route.get('/', isAdmin, getAllUsers);
 
 // Route POST "/users/login"
 route.post('/login', loginUser);

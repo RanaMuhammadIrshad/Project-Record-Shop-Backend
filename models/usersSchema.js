@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const Schema = mongoose.Schema;
@@ -19,10 +19,16 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    role: {
+      type: String,
+      enum: ['user', 'manager'],
+      default: 'user',
+    },
     password: {
       type: String,
       required: true,
     },
+    orders: [{ type: Schema.Types.ObjectId, ref: 'orders' }],
   },
   {
     toJSON: {
@@ -38,9 +44,9 @@ userSchema.virtual('fullName').get(function () {
   return this.firstName + ' ' + this.lastName;
 });
 
-userSchema.virtual('domain').get(function () {
-  return this.email.split('@')[1].split('.')[0];
-});
+// userSchema.virtual('domain').get(function () {
+//   return this.email.split('@')[1].split('.')[0];
+// });
 
 userSchema.pre('save', function (next) {
   // if (this.isModified('password')) {
