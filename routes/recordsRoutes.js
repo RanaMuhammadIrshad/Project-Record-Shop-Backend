@@ -7,6 +7,7 @@ import {
   updateRecord,
 } from '../controllers/recordsController.js';
 import { isAdmin } from '../middlewares/isAdminMiddleware.js';
+import verifyToken from '../middlewares/verifyToken.js';
 
 const route = express.Router();
 
@@ -17,12 +18,12 @@ route.get('/', getAllRecords);
 route.get('/:id', getSingleRecord);
 
 // Route POST "/records"
-route.post('/', isAdmin, createRecord);
+route.post('/', verifyToken, isAdmin, createRecord);
 
 // Route PATCH "/records/:id"
-route.patch('/:id', isAdmin, updateRecord);
+route.patch('/:id', verifyToken, isAdmin, updateRecord);
 
 // Route DELETE "/records/:id"
-route.delete('/:id', isAdmin, deleteRecord);
+route.delete('/:id', verifyToken, isAdmin, deleteRecord);
 
 export default route;

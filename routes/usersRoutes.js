@@ -10,25 +10,26 @@ import {
 import { body, check } from 'express-validator';
 import { usersValidation } from '../middlewares/validationMiddleware.js';
 import { isAdmin } from '../middlewares/isAdminMiddleware.js';
+import verifyToken from '../middlewares/verifyToken.js';
 
 const route = express.Router();
 
 // Route GET "/users"
-route.get('/', isAdmin, getAllUsers);
+route.get('/', verifyToken, isAdmin, getAllUsers);
 
 // Route POST "/users/login"
 route.post('/login', loginUser);
 
 // Route GET "/users/:id"
-route.get('/:id', getSingleUser);
+route.get('/:id', verifyToken, getSingleUser);
 
 // Route POST "/users"
 route.post('/', usersValidation, createUser);
 
 // Route PATCH "/users/:id"
-route.patch('/:id', updateUser);
+route.patch('/:id', verifyToken, updateUser);
 
 // Route DELETE "/users/:id"
-route.delete('/:id', deleteUser);
+route.delete('/:id', verifyToken, deleteUser);
 
 export default route;

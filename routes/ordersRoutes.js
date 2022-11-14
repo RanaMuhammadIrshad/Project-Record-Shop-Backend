@@ -7,22 +7,23 @@ import {
   updateOrder,
 } from '../controllers/ordersController.js';
 import { isAdmin } from '../middlewares/isAdminMiddleware.js';
+import verifyToken from '../middlewares/verifyToken.js';
 
 const route = express.Router();
 
 // Route GET "/orders"
-route.get('/', isAdmin, getAllOrders);
+route.get('/', verifyToken, isAdmin, getAllOrders);
 
 // Route GET "/orders/:id"
-route.get('/:id', getSingleOrder);
+route.get('/:id', verifyToken, getSingleOrder);
 
 // Route POST "/orders"
-route.post('/', createOrder);
+route.post('/', verifyToken, createOrder);
 
 // Route PATCH "/orders/:id"
-route.patch('/:id', updateOrder);
+route.patch('/:id', verifyToken, updateOrder);
 
 // Route DELETE "/orders/:id"
-route.delete('/:id', deleteOrder);
+route.delete('/:id', verifyToken, deleteOrder);
 
 export default route;

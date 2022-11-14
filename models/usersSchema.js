@@ -24,6 +24,9 @@ const userSchema = new Schema(
       enum: ['user', 'manager'],
       default: 'user',
     },
+    token: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,

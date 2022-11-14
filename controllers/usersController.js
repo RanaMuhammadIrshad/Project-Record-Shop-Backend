@@ -1,6 +1,7 @@
 import usersCollection from './../models/usersSchema.js';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -79,7 +80,30 @@ export const loginUser = async (req, res, next) => {
     if (user) {
       const check = await bcrypt.compare(req.body.password, user.password);
       if (check) {
-        res.json({ success: true, data: user });
+        // Authentication // creation of token
+        // first argument in sign is payload (user's data)
+        // second argument is your signature
+        let token = jwt.sign(
+          { _id: user._id, firstName: user.firstName },
+          process.env.TOKEN_SECRET_KEY,
+          { expiresIn: '1h', issuer: 'rana', audience: 'students' }
+        );
+        const updatedUser = await usersCollection
+          .findByIdAndUpdate(
+            user._id,
+            {
+              token: token,
+            },
+            { new: true }
+          )
+          .select('-token');
+        // user.token = token;
+        // await user.save();
+        // res.json({ success: true, data: user, token });
+        // res.cookie('authenticationCertificate', token);
+        // res.header('authenticationCertificate', token);
+        // res.json({ success: true, data: user });
+        res.header('token', token).json({ success: true, data: updatedUser });
       } else {
         throw new Error('password does not match!');
       }
