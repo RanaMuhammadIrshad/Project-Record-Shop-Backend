@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import usersRoute from './routes/usersRoutes.js';
 import recordsRoute from './routes/recordsRoutes.js';
 import ordersRoute from './routes/ordersRoutes.js';
@@ -11,6 +12,21 @@ dotenv.config(); // dotenv take env variables and store in process.env object
 // Creating or initializing server
 const app = express();
 const PORT = 4000;
+
+// Configure multer package
+// const upload = multer({ dest: 'upload/'});
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let fullPath = './upload';
+    cb(null, fullPath);
+  },
+  filename: function (req, file, cb) {
+    let fileName = Date.now() + '_' + file.originalname;
+    cb(null, fileName);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // create mongoose connection:
 mongoose.connect(process.env.MONGO_URI, () => {
@@ -23,14 +39,18 @@ app.use(morgan('dev'));
 //express json middleware to parse any incoming date to json data
 app.use(express.json());
 
+// server static files/pages
+
+app.use(express.static('upload'));
+
 // MVC
 // Models (data storage)
 // Views (UI, frontend, presentational data)
 // Controllers (request, handlers, logic)
 
 // Routes
-// "/users" GET POST PATCh DELETE
-app.use('/users', usersRoute);
+// "/users" GET POST PATCh DELETE  // upload.single ill attach req.file
+app.use('/users', upload.single('image'), usersRoute);
 // "/records" GET POST PATCh DELETE
 app.use('/records', recordsRoute);
 // "/orders" GET POST PATCH DELETE

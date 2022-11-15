@@ -1,4 +1,4 @@
-import usersCollection from './../models/usersSchema.js';
+import usersCollection from '../models/usersSchema.js';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -28,6 +28,7 @@ export const getSingleUser = async (req, res, next) => {
 
 // Register / Signup User
 export const createUser = async (req, res, next) => {
+  console.log(req.file);
   try {
     // Before storing password we need to hash it here
 
@@ -39,6 +40,7 @@ export const createUser = async (req, res, next) => {
     // console.log(hashedPassword);
     // req.body.password = hashedPassword;
     const user = new usersCollection(req.body);
+    user.profileImage = `http://localhost:4000/${req.file.filename}`;
     await user.save();
     res.json({
       success: true,

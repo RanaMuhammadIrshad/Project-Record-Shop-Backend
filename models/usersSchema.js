@@ -27,6 +27,12 @@ const userSchema = new Schema(
     token: {
       type: String,
     },
+    profileImage: {
+      type: String,
+      default: function () {
+        return `https://joeschmoe.io/${this.firstName}`;
+      },
+    },
     password: {
       type: String,
       required: true,
