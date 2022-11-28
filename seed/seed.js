@@ -3,9 +3,18 @@ import recordsCollection from '../models/recordsSchema.js';
 import { faker } from '@faker-js/faker';
 import usersCollection from '../models/usersSchema.js';
 
-mongoose.connect('mongodb://127.0.0.1:27017/record-shop-rana', () => {
-  console.log('SEED connected to DB !!!');
-});
+// mongoose.connect('mongodb://127.0.0.1:27017/record-shop-rana', () => {
+//   console.log('SEED connected to DB !!!');
+// });
+
+mongoose.connect(
+  'mongodb+srv://rana:28329Bremen@cluster0.q9ba6pk.mongodb.net/test',
+  () => {
+    console.log('SEED connected to DB !!!');
+  }
+);
+
+// mongodb+srv://rana:28329Bremen@cluster0.q9ba6pk.mongodb.net/test
 
 async function addRecords() {
   const recordPromises = Array(20)
