@@ -28,20 +28,22 @@ export const createOrder = async (req, res, next) => {
   try {
     const order = new ordersCollection(req.body);
     await order.save();
-    await usersCollection.findByIdAndUpdate(
-      order.userId,
-      {
-        $push: { orders: order._id },
-      },
-      { new: true }
-    );
+    const updatedUser = await usersCollection
+      .findByIdAndUpdate(
+        order.userId,
+        {
+          $push: { orders: order._id },
+        },
+        { new: true }
+      )
+      .populate('orders');
     // const user = await usersCollection.findById(order.userId);
     // user.orders.push(order._id);
     // await user.save();
 
     res.json({
       success: true,
-      order,
+      data: updatedUser,
     });
   } catch (err) {
     next(err);
@@ -65,8 +67,13 @@ export const updateOrder = async (req, res, next) => {
 export const deleteOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deletedOrder = await ordersCollection.findByIdAndDelete(id);
-    res.json({ success: true, status: deletedOrder });
+    // delete order from orders collection
+    await ordersCollection.findByIdAndDelete(id);
+    // delete order from user orders as well
+    const updatedUser = await usersCollection
+      .findByIdAndUpdate(req.user._id, { $pull: { orders: id } }, { new: true })
+      .populate('orders');
+    res.json({ success: true, data: updatedUser });
   } catch (err) {
     next(err);
   }

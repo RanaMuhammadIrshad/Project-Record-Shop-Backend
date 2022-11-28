@@ -6,6 +6,7 @@ import {
   getSingleUser,
   updateUser,
   loginUser,
+  checkUserToken,
 } from '../controllers/usersController.js';
 import { body, check } from 'express-validator';
 import { usersValidation } from '../middlewares/validationMiddleware.js';
@@ -19,6 +20,9 @@ route.get('/', verifyToken, isAdmin, getAllUsers);
 
 // Route POST "/users/login"
 route.post('/login', loginUser);
+
+// verifyToken Route GET
+route.get('/checkusertoken', checkUserToken);
 
 // Route GET "/users/:id"
 route.get('/:id', verifyToken, isAdmin, getSingleUser);

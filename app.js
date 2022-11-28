@@ -6,12 +6,16 @@ import multer from 'multer';
 import usersRoute from './routes/usersRoutes.js';
 import recordsRoute from './routes/recordsRoutes.js';
 import ordersRoute from './routes/ordersRoutes.js';
+// import cors from 'cors';
 
 dotenv.config(); // dotenv take env variables and store in process.env object
 
 // Creating or initializing server
 const app = express();
-const PORT = 4000;
+// const PORT = 4000;
+
+// dynamic porting
+const PORT = process.env.PORT || 4000;
 
 // Configure multer package
 // const upload = multer({ dest: 'upload/'});
@@ -33,6 +37,9 @@ mongoose.connect(process.env.MONGO_URI, () => {
   console.log('DB connection is established!!!');
 });
 
+// Cors middleware
+// app.use(cors({ origin: 'http://localhost:3000', exposedHeaders: ['token'] })); // '*' to allow all
+
 // app.use all methods : get,post,patch.... any URL
 app.use(morgan('dev'));
 
@@ -40,8 +47,13 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // server static files/pages
-
 app.use(express.static('upload'));
+
+// Serving our REACT-APP build file
+app.use(express.static('views/build'));
+app.get('/', (req, res) => {
+  res.sendFile('./views/build/index.html', { root: '.' });
+});
 
 // MVC
 // Models (data storage)

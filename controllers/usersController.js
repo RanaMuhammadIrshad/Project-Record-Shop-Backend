@@ -40,7 +40,11 @@ export const createUser = async (req, res, next) => {
     // console.log(hashedPassword);
     // req.body.password = hashedPassword;
     const user = new usersCollection(req.body);
-    user.profileImage = `http://localhost:4000/${req.file.filename}`;
+
+    if (req.file) {
+      user.profileImage = `http://localhost:4000/${req.file.filename}`;
+    }
+
     await user.save();
     res.json({
       success: true,
@@ -54,10 +58,35 @@ export const createUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updatedUser = await usersCollection.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    res.json({ success: true, user: updatedUser });
+    let user = await usersCollection.findById(id);
+    if (req.file) {
+      user.profileImage = `http://localhost:4000/${req.file.filename}`;
+    }
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+    await user.save();
+
+    let body = {};
+    for (const key in req.body) {
+      if (req.body[key] !== '' && key !== 'password') {
+        body[key] = req.body[key];
+      }
+    }
+
+    // user = { ...user, ...req.body }; // will overwrite values coming from req.body
+
+    // const updatedUser = await usersCollection.findByIdAndUpdate(id, req.body, {
+    //   new: true,
+    // });
+    const updatedUser = await usersCollection
+      .findByIdAndUpdate(id, body, {
+        new: true,
+      })
+      .populate('orders');
+    res.json({ success: true, data: updatedUser });
+    // res.json({ success: true, data: user });
   } catch (err) {
     next(err);
   }
@@ -98,7 +127,8 @@ export const loginUser = async (req, res, next) => {
             },
             { new: true }
           )
-          .select('-token');
+          .select('-token')
+          .populate('orders');
         // user.token = token;
         // await user.save();
         // res.json({ success: true, data: user, token });
@@ -112,6 +142,17 @@ export const loginUser = async (req, res, next) => {
     } else {
       throw new Error('email does not exists!');
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const checkUserToken = async (req, res, next) => {
+  try {
+    const token = req.headers.token;
+    const payload = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+    const user = await usersCollection.findById(payload._id).populate('orders');
+    res.json({ success: true, data: user });
   } catch (err) {
     next(err);
   }

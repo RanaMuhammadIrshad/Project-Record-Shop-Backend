@@ -30,7 +30,7 @@ const userSchema = new Schema(
     profileImage: {
       type: String,
       default: function () {
-        return `https://joeschmoe.io/${this.firstName}`;
+        return `https://joeschmoe.io/api/v1/${this.firstName}`;
       },
     },
     password: {
@@ -63,9 +63,12 @@ userSchema.pre('save', function (next) {
   //   this.password = hashedPassword;
   //   console.log('password hashed and stored in DB');
   // }
-  const hashedPassword = bcrypt.hashSync(this.password, 10);
-  this.password = hashedPassword;
-  console.log('password hashed and stored in DB');
+  if (this.isModified('password')) {
+    const hashedPassword = bcrypt.hashSync(this.password, 10);
+    this.password = hashedPassword;
+    console.log('password hashed and stored in DB');
+  }
+
   next();
 });
 
