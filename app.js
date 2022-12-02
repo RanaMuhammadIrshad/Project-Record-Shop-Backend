@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
 // "/users" GET POST PATCh DELETE  // upload.single ill attach req.file
 app.use('/users', upload.single('image'), usersRoute);
 // "/records" GET POST PATCh DELETE
-app.use('/records', recordsRoute);
+app.use('/records', upload.single('image'), recordsRoute);
 // "/orders" GET POST PATCH DELETE
 app.use('/orders', ordersRoute);
 // Handling 404 page not found error (error handling middle ware)

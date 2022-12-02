@@ -24,10 +24,16 @@ export const createRecord = async (req, res, next) => {
   // post request to create record
   try {
     const record = new recordsCollection(req.body);
+    // 29.11
+    if (req.file) {
+      record.img = `/${req.file.filename}`;
+    }
+
+    //
     await record.save();
     res.json({
       success: true,
-      record,
+      data: record,
     });
   } catch (err) {
     next(err);
